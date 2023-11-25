@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package go.micro.service.order;
+
+option go_package = "./order";
+
+service Order {
+	// 插入操作涉及到幂等性，需要生成全局唯一的订单ID
+	rpc InsertOrder (InserRequest) returns (InserResponse) {}
+	rpc GetOrder (GetRequest) returns (GetResponse) {}
+	// 更新操作涉及到乐观锁做并发控制，所以需要传入版本号
+	rpc UpdateOrder (UpdateRequest) returns (UpdateResponse) {}
+}
+
+// 定义一个枚举类型来表示订单状态
+enum OrderStatus {
+    UNPAID = 0; // 未支
+    PAID = 1;   // 已支付
+    CANCELLED = 2; // 已取消
+}
+
+message OrderInfo {
+	int64 OrderId = 1;
+	int64 OrderVersion = 2;
+	int64 UserId = 3;
+	string OrderData = 4;	
+	OrderStatus Status = 5;
+}
+
+message InserRequest {
+	OrderInfo OrderData = 1;
+}
+
+message InserResponse {
+	int32 RowsAffected = 1;
+}
+
+message GetRequest {
+	int64 OrderId = 1;	// 雪花算法生成的订单ID
+}
+
+message GetResponse {
+	OrderInfo OrderData = 1;
+}
+
+message UpdateRequest {
+	OrderInfo OrderData = 1;
+}
+
+message UpdateResponse {
+	int32 RowsAffected = 1;
+}
