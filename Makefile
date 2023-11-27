@@ -9,7 +9,7 @@ proto:
     
 
 .PHONY: build
-build: proto
+build: 
 
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o order-service *.go
 
@@ -18,5 +18,5 @@ test:
 	go test -v ./... -cover
 
 .PHONY: docker
-docker:
+docker: build
 	docker build . -t order-service:latest
