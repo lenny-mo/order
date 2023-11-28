@@ -8,7 +8,6 @@ import (
 )
 
 type OrderDAOInterface interface {
-	InitTable() error
 	CreateOrder(order *models.Order) (int64, error)
 	UpdateOrder(order *models.Order) (int64, error)
 	GetOrderById(orderId int64) (*models.Order, error)
@@ -24,10 +23,6 @@ func NewOrderDAO(db *gorm.DB) OrderDAOInterface {
 	return &OrderDAO{
 		db: db,
 	}
-}
-
-func (o *OrderDAO) InitTable() error {
-	return o.db.AutoMigrate(&models.Order{})
 }
 
 //	CreateOrder 创建订单
