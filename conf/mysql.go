@@ -3,11 +3,11 @@ package conf
 import "github.com/micro/go-micro/v2/config"
 
 type MysqlConfig struct {
-	Host     string `"json:host" yaml:"host"`
-	Port     int64  `"json:port" yaml:"port"`
-	User     string `"json:user" yaml:"user"`
-	Password string `"json:password" yaml:"password"`
-	DB       string `"json:db" yaml:"db"`
+	Host     string `json:"host" yaml:"host"`
+	Port     int64  `json:"port" yaml:"port"`
+	User     string `json:"user" yaml:"user"`
+	Password string `json:"password" yaml:"password"`
+	DB       string `json:"db" yaml:"db"`
 }
 
 // GetMysqlFromConsul 从 Consul 配置中心获取 MySQL 配置。
