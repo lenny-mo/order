@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/lenny-mo/cart/conf"
-	"github.com/lenny-mo/cart/utils"
+	"github.com/lenny-mo/order/conf"
 	"github.com/lenny-mo/order/domain/dao"
 	"github.com/lenny-mo/order/domain/models"
 	"github.com/lenny-mo/order/domain/services"
 	"github.com/lenny-mo/order/handler"
 	"github.com/lenny-mo/order/proto/order"
+	"github.com/lenny-mo/order/utils"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-plugins/registry/consul/v2"
@@ -68,7 +68,7 @@ func main() {
 	}
 
 	// 设置prometheus
-	utils.PrometheusBoot(9090)
+	utils.PrometheusBoot(9091)
 
 	// 创建服务
 	service := micro.NewService(
