@@ -10,14 +10,15 @@ import (
 )
 
 // 需要实现的接口
-// 
-//	type OrderHandler interface {
-//		// 插入操作涉及到幂等性，需要生成全局唯一的订单ID
-//		InsertOrder(context.Context, *InserRequest, *InserResponse) error
-//		GetOrder(context.Context, *GetRequest, *GetResponse) error
-//		// 更新操作涉及到乐观锁做并发控制，所以需要传入版本号
-//		UpdateOrder(context.Context, *UpdateRequest, *UpdateResponse) error
-//	}
+//
+//	 server api
+//		type OrderHandler interface {
+//			// 插入操作涉及到幂等性，需要生成全局唯一的订单ID
+//			InsertOrder(context.Context, *InserRequest, *InserResponse) error
+//			GetOrder(context.Context, *GetRequest, *GetResponse) error
+//			// 更新操作涉及到乐观锁做并发控制，所以需要传入版本号
+//			UpdateOrder(context.Context, *UpdateRequest, *UpdateResponse) error
+//		}
 type Order struct {
 	Service services.OrderService
 }
@@ -35,9 +36,10 @@ func (o *Order) InsertOrder(ctx context.Context, req *order.InserRequest, res *o
 		return err
 	}
 	if rowAffected == 0 {
-		res.RowsAffected = 0
 		return errors.New("insert order failed, row affected is 0")
 	}
+
+	res.RowsAffected = int32(rowAffected)
 
 	return nil
 }
@@ -75,6 +77,6 @@ func (o *Order) UpdateOrder(ctx context.Context, req *order.UpdateRequest, res *
 		res.RowsAffected = 0
 		return errors.New("update order failed, row affected is 0")
 	}
-
+	res.RowsAffected = int32(rowAffected)
 	return nil
 }

@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"encoding/json"
+	"fmt"
 
 	"github.com/lenny-mo/order/domain/models"
 	"gorm.io/gorm"
@@ -25,60 +25,21 @@ func NewOrderDAO(db *gorm.DB) OrderDAOInterface {
 	}
 }
 
-//	CreateOrder 创建订单
-//
-// 需要同时插入OrderItem表和Order表
+// CreateOrder 创建订单
 func (o *OrderDAO) CreateOrder(order *models.Order) (rowAffected int64, err error) {
-	// 开启事务
-	trans := o.db.Begin()
 
-	// 处理不可预见的panic or 事务提交失败
-	defer func() {
-		if r := recover(); r != nil || trans.Error != nil {
-			trans.Rollback()
-		} else {
-			// 判断提交是否成功
-			if err = trans.Commit().Error; err != nil {
-				trans.Rollback()
-			}
-		}
-
-	}()
-
-	if trans.Error != nil {
-		return 0, trans.Error
+	result := o.db.Create(order)
+	if result.Error != nil {
+		fmt.Println(result.Error)
+		return result.RowsAffected, err
 	}
 
-	// 可以预见的错误，需要手动回滚
-	if result := trans.Create(order); result.Error != nil {
-		trans.Rollback()
-		return 0, result.Error
-	} else {
-		rowAffected = result.RowsAffected
-	}
-
-	// 反序列化OrderData
-	var deserializedData []models.OrderItem
-	// 发生字符串拷贝
-	err = json.Unmarshal([]byte(order.OrderData), &deserializedData)
-	if err != nil {
-		return 0, err
-	}
-
-	// 批量插入，自动开启事务
-	if res := trans.Create(deserializedData); res.Error != nil {
-		trans.Rollback()
-		return 0, res.Error
-	}
-
-	return rowAffected, nil
+	return result.RowsAffected, nil
 }
 
 // UpdateOrder 更新订单
-//
-// 可能需要手动更新orderitem表 考虑开启事务
 func (o *OrderDAO) UpdateOrder(order *models.Order) (int64, error) {
-	result := o.db.Save(order)
+	result := o.db.Model(&models.Order{}).Where("order_id= ?", order.OrderId).Updates(order)
 	return result.RowsAffected, result.Error
 }
 
