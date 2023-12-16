@@ -10,7 +10,7 @@ import (
 type OrderDAOInterface interface {
 	CreateOrder(order *models.Order) (int64, error)
 	UpdateOrder(order *models.Order) (int64, error)
-	GetOrderById(orderId int64) (*models.Order, error)
+	GetOrderById(orderId string) (*models.Order, error)
 	CreateOrderItem(orderItem *models.OrderItem) (int64, error)
 	// 不是很清楚是否需要更新OrderItem，因为有外键约束，当Order表的OrderId字段更新时，OrderItem表的OrderId字段也更新
 }
@@ -43,7 +43,7 @@ func (o *OrderDAO) UpdateOrder(order *models.Order) (int64, error) {
 	return result.RowsAffected, result.Error
 }
 
-func (o *OrderDAO) GetOrderById(orderId int64) (*models.Order, error) {
+func (o *OrderDAO) GetOrderById(orderId string) (*models.Order, error) {
 	order := &models.Order{}
 	result := o.db.Where("order_id = ?", orderId).First(order)
 	return order, result.Error

@@ -11,7 +11,7 @@ type OrderServiceInterface interface {
 	// 更新订单
 	UpdateOrder(order *models.Order) (int64, error)
 	// 获取订单
-	GetOrderById(orderId int64) (*models.Order, error)
+	GetOrderById(orderId string) (*models.Order, error)
 }
 
 type OrderService struct {
@@ -38,6 +38,6 @@ func (o *OrderService) UpdateOrder(order *models.Order) (int64, error) {
 	return o.OrderDAO.UpdateOrder(order)
 }
 
-func (o *OrderService) GetOrderById(orderId int64) (*models.Order, error) {
+func (o *OrderService) GetOrderById(orderId string) (*models.Order, error) {
 	return o.OrderDAO.GetOrderById(orderId)
 }

@@ -20,7 +20,7 @@ enum OrderStatus {
 }
 
 message OrderInfo {
-	int64 OrderId = 1;
+	string OrderId = 1;	// uuid
 	int64 OrderVersion = 2;
 	int64 UserId = 3;
 	string OrderData = 4;	
@@ -36,7 +36,7 @@ message InserResponse {
 }
 
 message GetRequest {
-	int64 OrderId = 1;	// 雪花算法生成的订单ID
+	string OrderId = 1;	// 雪花算法生成的订单ID
 }
 
 message GetResponse {

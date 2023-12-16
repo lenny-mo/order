@@ -63,9 +63,9 @@ func main() {
 	if !db.Migrator().HasTable(&models.Order{}) {
 		db.Migrator().CreateTable(&models.Order{})
 	}
-	if !db.Migrator().HasTable(&models.OrderItem{}) {
-		db.Migrator().CreateTable(&models.OrderItem{})
-	}
+	// if !db.Migrator().HasTable(&models.OrderItem{}) {
+	// 	db.Migrator().CreateTable(&models.OrderItem{})
+	// }
 
 	// 设置prometheus
 	utils.PrometheusBoot(9091)

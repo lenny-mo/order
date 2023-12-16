@@ -9,6 +9,7 @@ replace google.golang.org/grpc => google.golang.org/grpc v1.26.0
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/golang/protobuf v1.5.3
+	github.com/google/uuid v1.5.0 // indirect
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/micro/go-plugins/config/source/consul/v2 v2.9.1
 	github.com/micro/go-plugins/registry/consul/v2 v2.9.1
