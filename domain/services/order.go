@@ -24,12 +24,6 @@ func NewOrderService(orderdao dao.OrderDAO) OrderServiceInterface {
 	}
 }
 
-// CreateOrder 创建订单
-//
-// # Order中的Orderdata 是OrderItem 列表的json序列化
-//
-// 需要反序列化成OrderItem列表
-// 并且调用orderitem的插入方法
 func (o *OrderService) CreateOrder(order *models.Order) (int64, error) {
 	return o.OrderDAO.CreateOrder(order)
 }
