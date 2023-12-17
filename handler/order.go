@@ -71,7 +71,7 @@ func (o *Order) UpdateOrder(ctx context.Context, req *order.UpdateRequest, res *
 		Status:       int8(req.OrderData.Status),
 		OrderVersion: req.OrderData.OrderVersion,
 	}
-	rowAffected, err := o.Service.UpdateOrder(order)
+	rowAffected, err := o.Service.UpdateOrder(order, req.Oldversion)
 	if err != nil {
 		return err
 	}

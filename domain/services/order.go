@@ -9,7 +9,7 @@ type OrderServiceInterface interface {
 	// 创建订单
 	CreateOrder(order *models.Order) (int64, error)
 	// 更新订单
-	UpdateOrder(order *models.Order) (int64, error)
+	UpdateOrder(order *models.Order, oldversion int64) (int64, error)
 	// 获取订单
 	GetOrderById(orderId string) (*models.Order, error)
 }
@@ -28,8 +28,8 @@ func (o *OrderService) CreateOrder(order *models.Order) (int64, error) {
 	return o.OrderDAO.CreateOrder(order)
 }
 
-func (o *OrderService) UpdateOrder(order *models.Order) (int64, error) {
-	return o.OrderDAO.UpdateOrder(order)
+func (o *OrderService) UpdateOrder(order *models.Order, oldversion int64) (int64, error) {
+	return o.OrderDAO.UpdateOrder(order, oldversion)
 }
 
 func (o *OrderService) GetOrderById(orderId string) (*models.Order, error) {

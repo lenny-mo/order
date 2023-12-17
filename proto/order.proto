@@ -47,6 +47,7 @@ message GetResponse {
 
 message UpdateRequest {
 	OrderInfo OrderData = 1;
+	int64 oldversion =2; 	// 用于记录修改前的version 
 }
 
 message UpdateResponse {
