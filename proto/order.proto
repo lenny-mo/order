@@ -10,6 +10,8 @@ service Order {
 	rpc GetOrder (GetRequest) returns (GetResponse) {}
 	// 更新操作涉及到乐观锁做并发控制，所以需要传入版本号
 	rpc UpdateOrder (UpdateRequest) returns (UpdateResponse) {}
+	// 用户在创建订单的时候需要先调用此方法生成订单号
+	rpc GenerateUUID (Empty) returns (GenerateUUIDResponse) {}
 }
 
 // 定义一个枚举类型来表示订单状态
@@ -49,4 +51,10 @@ message UpdateRequest {
 
 message UpdateResponse {
 	int32 RowsAffected = 1;
+}
+
+message Empty {}
+
+message GenerateUUIDResponse {
+	string uuid =1;
 }

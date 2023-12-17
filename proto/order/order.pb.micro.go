@@ -47,6 +47,8 @@ type OrderService interface {
 	GetOrder(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*GetResponse, error)
 	// 更新操作涉及到乐观锁做并发控制，所以需要传入版本号
 	UpdateOrder(ctx context.Context, in *UpdateRequest, opts ...client.CallOption) (*UpdateResponse, error)
+	// 用户在创建订单的时候需要先调用此方法生成订单号
+	GenerateUUID(ctx context.Context, in *Empty, opts ...client.CallOption) (*GenerateUUIDResponse, error)
 }
 
 type orderService struct {
@@ -91,6 +93,16 @@ func (c *orderService) UpdateOrder(ctx context.Context, in *UpdateRequest, opts 
 	return out, nil
 }
 
+func (c *orderService) GenerateUUID(ctx context.Context, in *Empty, opts ...client.CallOption) (*GenerateUUIDResponse, error) {
+	req := c.c.NewRequest(c.name, "Order.GenerateUUID", in)
+	out := new(GenerateUUIDResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Order service
 
 type OrderHandler interface {
@@ -99,6 +111,8 @@ type OrderHandler interface {
 	GetOrder(context.Context, *GetRequest, *GetResponse) error
 	// 更新操作涉及到乐观锁做并发控制，所以需要传入版本号
 	UpdateOrder(context.Context, *UpdateRequest, *UpdateResponse) error
+	// 用户在创建订单的时候需要先调用此方法生成订单号
+	GenerateUUID(context.Context, *Empty, *GenerateUUIDResponse) error
 }
 
 func RegisterOrderHandler(s server.Server, hdlr OrderHandler, opts ...server.HandlerOption) error {
@@ -106,6 +120,7 @@ func RegisterOrderHandler(s server.Server, hdlr OrderHandler, opts ...server.Han
 		InsertOrder(ctx context.Context, in *InserRequest, out *InserResponse) error
 		GetOrder(ctx context.Context, in *GetRequest, out *GetResponse) error
 		UpdateOrder(ctx context.Context, in *UpdateRequest, out *UpdateResponse) error
+		GenerateUUID(ctx context.Context, in *Empty, out *GenerateUUIDResponse) error
 	}
 	type Order struct {
 		order
@@ -128,4 +143,8 @@ func (h *orderHandler) GetOrder(ctx context.Context, in *GetRequest, out *GetRes
 
 func (h *orderHandler) UpdateOrder(ctx context.Context, in *UpdateRequest, out *UpdateResponse) error {
 	return h.OrderHandler.UpdateOrder(ctx, in, out)
+}
+
+func (h *orderHandler) GenerateUUID(ctx context.Context, in *Empty, out *GenerateUUIDResponse) error {
+	return h.OrderHandler.GenerateUUID(ctx, in, out)
 }
