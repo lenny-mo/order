@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/lenny-mo/emall-utils/tracer"
 	"github.com/lenny-mo/order/conf"
 	"github.com/lenny-mo/order/domain/dao"
 	"github.com/lenny-mo/order/domain/models"
@@ -39,14 +40,22 @@ func main() {
 		}
 	})
 
+	serviceName := "go.micro.service.order"
 	// 3 链路追踪
-	tracer, tracerio, err := utils.NewTracer("order-server", "127.0.0.1:6831")
+	err = tracer.InitTracer(serviceName, "127.0.0.1:6831")
 	if err != nil {
 		fmt.Println(err)
-		panic(err)
+		return
 	}
-	defer tracerio.Close()
-	opentracing.SetGlobalTracer(tracer) // 设置全局的链路追踪
+	defer tracer.Closer.Close()
+	opentracing.SetGlobalTracer(tracer.Tracer)
+	// tracer, tracerio, err := utils.NewTracer("order-server", "127.0.0.1:6831")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	panic(err)
+	// }
+	// defer tracerio.Close()
+	// opentracing.SetGlobalTracer(tracer)
 
 	// 4. 获取mysql配置
 	mysqlConf := conf.GetMysqlFromConsul(consulCof, "mysql")
@@ -63,16 +72,13 @@ func main() {
 	if !db.Migrator().HasTable(&models.Order{}) {
 		db.Migrator().CreateTable(&models.Order{})
 	}
-	// if !db.Migrator().HasTable(&models.OrderItem{}) {
-	// 	db.Migrator().CreateTable(&models.OrderItem{})
-	// }
 
 	// 设置prometheus
 	utils.PrometheusBoot(9091)
 
 	// 创建服务
 	service := micro.NewService(
-		micro.Name("go.micro.service.order"),
+		micro.Name(serviceName),
 		micro.Version("latest"),
 		micro.Address("127.0.0.1:8084"), // 服务监听地址
 		// 使用consul注册中心

@@ -10,6 +10,7 @@ require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.5.0 // indirect
+	github.com/lenny-mo/emall-utils v0.0.0-20231218141407-3b3960e96cd9 // indirect
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/micro/go-plugins/config/source/consul/v2 v2.9.1
 	github.com/micro/go-plugins/registry/consul/v2 v2.9.1
