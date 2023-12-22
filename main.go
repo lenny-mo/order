@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	m "github.com/lenny-mo/emall-utils/metrics"
 	"github.com/lenny-mo/emall-utils/tracer"
 	"github.com/lenny-mo/order/conf"
 	"github.com/lenny-mo/order/domain/dao"
@@ -11,7 +12,6 @@ import (
 	"github.com/lenny-mo/order/domain/services"
 	"github.com/lenny-mo/order/handler"
 	"github.com/lenny-mo/order/proto/order"
-	"github.com/lenny-mo/order/utils"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-plugins/registry/consul/v2"
@@ -49,13 +49,6 @@ func main() {
 	}
 	defer tracer.Closer.Close()
 	opentracing.SetGlobalTracer(tracer.Tracer)
-	// tracer, tracerio, err := utils.NewTracer("order-server", "127.0.0.1:6831")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	panic(err)
-	// }
-	// defer tracerio.Close()
-	// opentracing.SetGlobalTracer(tracer)
 
 	// 4. 获取mysql配置
 	mysqlConf := conf.GetMysqlFromConsul(consulCof, "mysql")
@@ -74,7 +67,7 @@ func main() {
 	}
 
 	// 设置prometheus
-	utils.PrometheusBoot(9091)
+	m.PrometheusBoot(9092)
 
 	// 创建服务
 	service := micro.NewService(

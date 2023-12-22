@@ -3,7 +3,9 @@ package handler
 import (
 	"context"
 	"errors"
+	"time"
 
+	m "github.com/lenny-mo/emall-utils/metrics"
 	"github.com/lenny-mo/order/domain/models"
 	"github.com/lenny-mo/order/domain/services"
 	"github.com/lenny-mo/order/proto/order"
@@ -25,7 +27,24 @@ type Order struct {
 	Service services.OrderService
 }
 
+// 用于指定prometheus监控label
+const (
+	SERVICE = "order"
+	VERSION = "v1.0.0"
+	OS      = "centOS"
+)
+
 func (o *Order) InsertOrder(ctx context.Context, req *order.InserRequest, res *order.InserResponse) error {
+	// prometheus 请求数+1
+	m.CounterRequestProcess(SERVICE, VERSION, OS)
+	// 记录支付处理开始时间
+	startTime := time.Now()
+	defer func() {
+		duration := time.Since(startTime).Seconds()
+		m.RecordPaymentResponseTime(SERVICE, VERSION, OS, duration) // Histogram 指标
+		m.TaskExecutionTime(SERVICE, VERSION, OS, duration)         // Summary 指标
+	}()
+
 	order := &models.Order{
 		UserId:       req.OrderData.UserId,
 		OrderData:    req.OrderData.OrderData,
@@ -47,6 +66,16 @@ func (o *Order) InsertOrder(ctx context.Context, req *order.InserRequest, res *o
 }
 
 func (o *Order) GetOrder(ctx context.Context, req *order.GetRequest, res *order.GetResponse) error {
+	// prometheus 请求数+1
+	m.CounterRequestProcess(SERVICE, VERSION, OS)
+	// 记录支付处理开始时间
+	startTime := time.Now()
+	defer func() {
+		duration := time.Since(startTime).Seconds()
+		m.RecordPaymentResponseTime(SERVICE, VERSION, OS, duration) // Histogram 指标
+		m.TaskExecutionTime(SERVICE, VERSION, OS, duration)         // Summary 指标
+	}()
+
 	orderdata, err := o.Service.GetOrderById(req.OrderId)
 	if err != nil {
 		return err
@@ -64,6 +93,16 @@ func (o *Order) GetOrder(ctx context.Context, req *order.GetRequest, res *order.
 }
 
 func (o *Order) UpdateOrder(ctx context.Context, req *order.UpdateRequest, res *order.UpdateResponse) error {
+	// prometheus 请求数+1
+	m.CounterRequestProcess(SERVICE, VERSION, OS)
+	// 记录支付处理开始时间
+	startTime := time.Now()
+	defer func() {
+		duration := time.Since(startTime).Seconds()
+		m.RecordPaymentResponseTime(SERVICE, VERSION, OS, duration) // Histogram 指标
+		m.TaskExecutionTime(SERVICE, VERSION, OS, duration)         // Summary 指标
+	}()
+
 	order := &models.Order{
 		UserId:       req.OrderData.UserId,
 		OrderData:    req.OrderData.OrderData,
